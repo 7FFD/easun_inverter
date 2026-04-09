@@ -1,0 +1,15 @@
+# Config files with secrets / local settings
+backend/config/
+
+# Python
+__pycache__/
+*.py[cod]
+backend/.venv/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Build output
+backend/dist/

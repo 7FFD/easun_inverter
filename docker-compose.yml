@@ -1,0 +1,10 @@
+services:
+  easun:
+    build: .
+    network_mode: host          # Linux: required for UDP broadcast + inverter reverse TCP on :8899
+    # network_mode: host does nothing on macOS — use the override below instead:
+    # ports:
+    #   - "8000:8000"
+    volumes:
+      - ./config:/data
+    restart: unless-stopped

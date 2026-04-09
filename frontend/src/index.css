@@ -1,0 +1,824 @@
+:root {
+  --bg: #0b1120;
+  --surface: #131f35;
+  --card: #1a2740;
+  --card-hover: #1f2f4a;
+  --border: #243352;
+  --text: #e8edf5;
+  --text-muted: #7a8fac;
+  --text-dim: #4a5e7a;
+
+  --green: #22d872;
+  --green-dim: #165c32;
+  --yellow: #f5c542;
+  --yellow-dim: #5c4a10;
+  --red: #f04060;
+  --red-dim: #5c1520;
+  --blue: #4499ff;
+  --blue-dim: #0f2a5c;
+  --orange: #ff8c42;
+  --orange-dim: #5c2a10;
+  --purple: #b87aff;
+  --purple-dim: #3a1a5c;
+  --cyan: #22d4e8;
+  --cyan-dim: #0c3a42;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Setup page ──────────────────────────────────────── */
+.setup-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 50% 0%, #0d1f40 0%, var(--bg) 70%);
+}
+
+.setup-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+}
+
+.setup-logo {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.setup-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.setup-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.setup-section {
+  margin-bottom: 1.5rem;
+}
+
+.setup-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.setup-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.setup-input:focus {
+  border-color: var(--blue);
+}
+
+.setup-input::placeholder {
+  color: var(--text-dim);
+}
+
+.setup-select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-size: 0.9375rem;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 0.15s;
+}
+
+.setup-select:focus {
+  border-color: var(--blue);
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  margin-top: 0.75rem;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--card-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  width: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.discovery-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  padding: 0.875rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.discovery-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.discovery-result-row + .discovery-result-row {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.discovery-key {
+  color: var(--text-muted);
+}
+
+.discovery-val {
+  color: var(--green);
+  font-weight: 600;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.8125rem;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.alert-error {
+  background: rgba(240, 64, 96, 0.12);
+  border: 1px solid rgba(240, 64, 96, 0.35);
+  color: #ff8090;
+}
+
+.alert-info {
+  background: rgba(68, 153, 255, 0.1);
+  border: 1px solid rgba(68, 153, 255, 0.3);
+  color: var(--blue);
+}
+
+/* ─── Discovery log ───────────────────────────────────── */
+.discovery-log {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  padding: 0.5rem 0;
+  margin: 1rem 0;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.8125rem;
+}
+
+.discovery-log-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.375rem 0.875rem;
+}
+
+.discovery-log-row + .discovery-log-row {
+  border-top: 1px solid var(--border);
+}
+
+.discovery-log-icon {
+  width: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.discovery-log-label {
+  flex: 1;
+  color: var(--text-muted);
+}
+
+.discovery-log-status {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.discovery-log-divider {
+  padding: 0.25rem 0.875rem;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── Spinner ──────────────────────────────────────────── */
+.spinner {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Dashboard ───────────────────────────────────────── */
+.dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dash-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dash-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.dash-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dash-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-green {
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+
+.dot-yellow {
+  background: var(--yellow);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.dot-red {
+  background: var(--red);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.dash-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.refresh-info {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ─── Dashboard grid ──────────────────────────────────── */
+.dash-body {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.dash-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 60vh;
+  color: var(--text-muted);
+}
+
+.dash-loading-text {
+  font-size: 1rem;
+}
+
+.dash-error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 60vh;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ─── Card base ───────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.card:hover {
+  border-color: #334466;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.card-icon-green {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+.card-icon-yellow {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+}
+
+.card-icon-blue {
+  background: var(--blue-dim);
+  color: var(--blue);
+}
+
+.card-icon-orange {
+  background: var(--orange-dim);
+  color: var(--orange);
+}
+
+.card-icon-purple {
+  background: var(--purple-dim);
+  color: var(--purple);
+}
+
+.card-icon-cyan {
+  background: var(--cyan-dim);
+  color: var(--cyan);
+}
+
+.card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ─── Metric rows ─────────────────────────────────────── */
+.metric-primary {
+  margin-bottom: 1rem;
+}
+
+.metric-primary-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-primary-unit {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+}
+
+.metric-primary-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.125rem;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.metric {
+  background: var(--surface);
+  border-radius: 0.625rem;
+  padding: 0.625rem 0.75rem;
+}
+
+.metric-label {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+}
+
+.metric-value {
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Progress bar ────────────────────────────────────── */
+.progress-wrap {
+  margin-top: 1rem;
+}
+
+.progress-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.375rem;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+/* ─── Divider ─────────────────────────────────────────── */
+.card-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+/* ─── Sub-section ─────────────────────────────────────── */
+.subsection-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.625rem;
+}
+
+/* ─── Status card ─────────────────────────────────────── */
+.status-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.mode-sub {
+  background: rgba(68, 153, 255, 0.15);
+  color: var(--blue);
+  border: 1px solid rgba(68, 153, 255, 0.3);
+}
+
+.mode-sbu {
+  background: rgba(34, 216, 114, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(34, 216, 114, 0.3);
+}
+
+.mode-unknown {
+  background: rgba(122, 143, 172, 0.15);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* ─── Null/loading state ──────────────────────────────── */
+.value-null {
+  color: var(--text-dim);
+}
+
+/* ─── MQTT panel ──────────────────────────────────────── */
+.mqtt-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 4.5rem 1.5rem 0;
+  z-index: 100;
+}
+
+.mqtt-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  width: 340px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.mqtt-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.mqtt-panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mqtt-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+}
+
+.mqtt-close:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.mqtt-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--surface);
+  border-radius: 0.625rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.mqtt-status-label {
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.mqtt-status-broker {
+  color: var(--text-dim);
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+.mqtt-field {
+  margin-bottom: 0.875rem;
+}
+
+.mqtt-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.375rem;
+}
+
+.mqtt-field input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.mqtt-field input:focus {
+  border-color: var(--blue);
+}
+
+.mqtt-field input::placeholder {
+  color: var(--text-dim);
+}
+
+.mqtt-field-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+}
+
+.mqtt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.btn-mqtt-connect {
+  background: var(--blue);
+  color: #fff;
+}
+
+.btn-mqtt-connect:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-mqtt-discovery {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(34, 216, 114, 0.3);
+}
+
+.btn-mqtt-discovery:hover:not(:disabled) {
+  background: rgba(34, 216, 114, 0.2);
+}
+
+.btn-mqtt-disconnect {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-mqtt-disconnect:hover:not(:disabled) {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+/* ─── Energy Flow Card ────────────────────────────────── */
+
+/* stroke-dasharray period = 5+8 = 13; animate exactly 13px of offset per cycle
+   so the pattern loops seamlessly.
+   Path direction: node → center.
+   flow-active-in  = node is source  (dashes travel toward center)
+   flow-active-out = node is sink    (dashes travel toward node) */
+
+@keyframes flow-to-center {
+  from { stroke-dashoffset: 13; }
+  to   { stroke-dashoffset: 0;  }
+}
+
+@keyframes flow-from-center {
+  from { stroke-dashoffset: 0;  }
+  to   { stroke-dashoffset: 13; }
+}
+
+.flow-line {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.flow-active-in {
+  stroke-dasharray: 5 8;
+  animation: flow-to-center 1.2s linear infinite;
+}
+
+.flow-active-out {
+  stroke-dasharray: 5 8;
+  animation: flow-from-center 1.2s linear infinite;
+}
+
+.flow-inactive {
+  opacity: 0.12;
+}
+
+.mqtt-error {
+  font-size: 0.75rem;
+  color: var(--red);
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(240, 64, 96, 0.1);
+  border-radius: 0.375rem;
+}
