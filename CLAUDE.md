@@ -23,6 +23,39 @@ npm run build    # production build
 npx tsc --noEmit # type-check only
 ```
 
+### CLI (`cli/easun.py` via `cli/easun.sh`)
+
+Purpose:
+- Quick terminal tooling for inverter discovery, one-shot/live monitoring, and raw register inspection.
+- Uses `backend/easunpy` directly (same protocol path as backend runtime).
+- Intended for diagnostics, model reverse-engineering, and validating register maps when adding new inverter models.
+
+Usage:
+```bash
+# show CLI help
+./cli/easun --help
+
+# discover inverter on LAN (prints ready-to-run templates with discovered IPs)
+./cli/easun discover
+
+# monitor (model is required); discovery-first if IP pair not provided
+./cli/easun monitor --model ISOLAR_SMG_II_6K --once
+./cli/easun monitor --model ISOLAR_SMG_II_6K --interval 10
+
+# explicit IP pair (recommended for repeated runs)
+./cli/easun --inverter-ip 192.168.1.160 --local-ip 192.168.1.179 monitor --model ISOLAR_SMG_II_6K --once
+
+# raw register reads
+./cli/easun read-registers 200 100
+./cli/easun --inverter-ip 192.168.1.160 --local-ip 192.168.1.179 read-registers 200 100
+./cli/easun read-registers 270 20 --fmt UnsignedInt --raw
+```
+
+Connection behavior:
+- If both `--inverter-ip` and `--local-ip` are supplied, CLI uses them directly.
+- Otherwise, CLI runs discovery for that command invocation.
+- CLI does not use backend persisted `connection_config.json`.
+
 ### Docker (deploy to Linux server)
 ```bash
 # Build for linux/amd64 (required when building on Apple Silicon)
