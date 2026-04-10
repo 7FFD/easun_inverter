@@ -224,7 +224,7 @@ class MQTTManager:
         cfg = self._config
         device_payload: dict = {
             "identifiers": [cfg.device_id],
-            "name": "Easun Inverter",
+            "name": f"Easun Inverter ({cfg.device_id.removeprefix('easun_')})",
             "model": cfg.inverter_model,
             "manufacturer": "Easun Power",
         }
