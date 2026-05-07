@@ -118,16 +118,29 @@ def _start_poller(inverter_ip: str, local_ip: str, model: str) -> None:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Auto-connect MQTT
+    # Auto-connect MQTT (retry up to 3 times to handle broker starting after backend)
     saved_mqtt = MQTTConfig.load()
     if saved_mqtt:
-        try:
-            loop = asyncio.get_running_loop()
-            await loop.run_in_executor(None, mqtt_manager.connect, saved_mqtt)
-            await asyncio.sleep(1.5)
-            logger.info(f"Auto-connected to MQTT broker {saved_mqtt.host}:{saved_mqtt.port}")
-        except Exception:
-            logger.warning("Auto-connect to MQTT failed — will retry on next manual connect")
+        loop = asyncio.get_running_loop()
+        for attempt in range(3):
+            try:
+                await loop.run_in_executor(None, mqtt_manager.connect, saved_mqtt)
+                await asyncio.sleep(1.5)
+                if mqtt_manager.connected:
+                    logger.info(f"Auto-connected to MQTT broker {saved_mqtt.host}:{saved_mqtt.port}")
+                    try:
+                        await loop.run_in_executor(None, mqtt_manager.publish_discovery)
+                    except Exception as e:
+                        logger.warning(f"Auto-publish discovery failed: {e}")
+                    break
+                else:
+                    raise RuntimeError(mqtt_manager.error or "connection not established")
+            except Exception as e:
+                if attempt < 2:
+                    logger.warning(f"Auto-connect to MQTT failed (attempt {attempt + 1}/3): {e} — retrying in 5s")
+                    await asyncio.sleep(5)
+                else:
+                    logger.warning(f"Auto-connect to MQTT failed after 3 attempts: {e}")
 
     # Auto-start inverter poller
     saved_conn = load_connection_config()
