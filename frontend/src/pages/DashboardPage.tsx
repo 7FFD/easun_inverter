@@ -5,6 +5,8 @@ import SolarCard from "../components/SolarCard";
 import GridCard from "../components/GridCard";
 import OutputCard from "../components/OutputCard";
 import EnergyFlowCard from "../components/EnergyFlowCard";
+import SoftBmsCard from "../components/SoftBmsCard";
+import SoftBmsPage from "./SoftBmsPage";
 
 const REFRESH_INTERVAL = 20;
 
@@ -32,6 +34,8 @@ export default function DashboardPage({ config, onDisconnect }: Props) {
   const [errorMsg, setErrorMsg] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const [view, setView] = useState<"dashboard" | "softbms">("dashboard");
 
   // MQTT state
   const [mqttOpen, setMqttOpen] = useState(false);
@@ -241,6 +245,14 @@ export default function DashboardPage({ config, onDisconnect }: Props) {
             </span>
           )}
 
+          <button
+            className="btn btn-ghost"
+            onClick={() => setView((v) => (v === "softbms" ? "dashboard" : "softbms"))}
+            title="SoftBMS battery estimator"
+          >
+            🧠 SoftBMS
+          </button>
+
           {/* MQTT button */}
           <button
             className="btn btn-ghost"
@@ -433,8 +445,10 @@ export default function DashboardPage({ config, onDisconnect }: Props) {
         </div>
       )}
 
+      {view === "softbms" && <SoftBmsPage onBack={() => setView("dashboard")} />}
+
       {/* Dashboard body */}
-      {connState === "connecting" && (
+      {view === "dashboard" && connState === "connecting" && (
         <div className="dash-loading">
           <div className="spinner" style={{ width: "2rem", height: "2rem", borderWidth: 3 }} />
           <p className="dash-loading-text">Connecting to inverter…</p>
@@ -450,7 +464,7 @@ export default function DashboardPage({ config, onDisconnect }: Props) {
         </div>
       )}
 
-      {(connState === "error" || connState === "closed") && (
+      {view === "dashboard" && (connState === "error" || connState === "closed") && (
         <div className="dash-error">
           <div style={{ fontSize: "2rem" }}>⚠️</div>
           <p style={{ color: "var(--text-muted)" }}>{errorMsg || "Connection lost"}</p>
@@ -460,7 +474,7 @@ export default function DashboardPage({ config, onDisconnect }: Props) {
         </div>
       )}
 
-      {connState === "live" && data && (
+      {view === "dashboard" && connState === "live" && data && (
         <div className="dash-body">
           {errorMsg && (
             <div className="alert alert-error" style={{ marginBottom: "1.25rem" }}>
@@ -479,7 +493,8 @@ export default function DashboardPage({ config, onDisconnect }: Props) {
               </div>
             )}
             {data.grid && <GridCard data={data.grid} status={data.status} />}
-            {data.battery && <BatteryCard data={data.battery} />}
+            {data.battery && <BatteryCard data={data.battery} softBms={data.soft_bms} />}
+            {data.soft_bms && <SoftBmsCard data={data.soft_bms} onManage={() => setView("softbms")} />}
             {data.output && <OutputCard data={data.output} />}
             {data.pv && <SolarCard data={data.pv} />}
           </div>

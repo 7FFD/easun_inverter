@@ -23,6 +23,7 @@ from easunpy.models import MODEL_CONFIGS
 from easunpy.async_isolar import AsyncISolar
 
 from mqtt_manager import MQTTConfig, mqtt_manager
+from soft_bms import soft_bms
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("easunpy").setLevel(logging.DEBUG)
@@ -81,6 +82,11 @@ async def _poll_inverter(inverter_ip: str, local_ip: str, model: str) -> None:
                 "status": to_serializable(status),
                 "timestamp": datetime.datetime.now().isoformat(),
             }
+            if battery is not None and battery.power is not None:
+                try:
+                    payload["soft_bms"] = soft_bms.update(battery.power)
+                except Exception:
+                    logger.exception("SoftBms update failed")
             _latest_payload = payload
 
             for q in list(_subscribers):
@@ -152,6 +158,7 @@ async def lifespan(_: FastAPI):
 
     if _poller_task and not _poller_task.done():
         _poller_task.cancel()
+    soft_bms.save()
 
 
 app = FastAPI(title="Easun Inverter API", lifespan=lifespan)
@@ -367,6 +374,31 @@ async def api_mqtt_disconnect():
     loop = asyncio.get_running_loop()
     await loop.run_in_executor(None, mqtt_manager.disconnect)
     return {"connected": False}
+
+
+# ── SoftBms ────────────────────────────────────────────────────────────────
+
+class SoftBmsConfigRequest(BaseModel):
+    capacity_wh: Optional[float] = None   # usable battery capacity in Wh (0 clears it)
+    bias_w: Optional[float] = None        # seed power-reading bias; resets calibration history
+    efficiency: Optional[float] = None    # charge efficiency, 0.5–1.0
+    auto_calibrate: Optional[bool] = None
+
+
+@app.get("/api/soft-bms")
+async def api_soft_bms_status():
+    return soft_bms.status()
+
+
+@app.post("/api/soft-bms/config")
+async def api_soft_bms_config(req: SoftBmsConfigRequest):
+    return soft_bms.configure(**req.model_dump())
+
+
+@app.post("/api/soft-bms/full")
+async def api_soft_bms_full():
+    """Manually declare the battery full (re-anchor SOC to 100 %)."""
+    return soft_bms.set_full()
 
 
 # ── WebSocket ──────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import { BatteryData } from "../types";
+import { BatteryData, SoftBmsSnapshot } from "../types";
 
 function socColor(soc: number): string {
   if (soc >= 60) return "var(--green)";
@@ -13,10 +13,14 @@ function fmt(v: number | null | undefined, decimals = 1): string {
 
 interface Props {
   data: BatteryData;
+  softBms?: SoftBmsSnapshot;
 }
 
-export default function BatteryCard({ data }: Props) {
-  const color = socColor(data.soc);
+export default function BatteryCard({ data, softBms }: Props) {
+  // Prefer SoftBMS (energy-integrated) over the inverter's voltage-derived SOC when available.
+  const useSoft = softBms?.soc_pct != null;
+  const soc = useSoft ? (softBms!.soc_pct as number) : data.soc;
+  const color = socColor(soc);
   return (
     <div className="card">
       <div className="card-header">
@@ -26,17 +30,19 @@ export default function BatteryCard({ data }: Props) {
 
       <div className="metric-primary">
         <div className="metric-primary-value" style={{ color }}>
-          {data.soc}
+          {soc}
           <span className="metric-primary-unit">%</span>
         </div>
-        <div className="metric-primary-label">State of charge</div>
+        <div className="metric-primary-label">
+          {useSoft ? `State of charge · SoftBMS (inverter: ${data.soc}%)` : "State of charge"}
+        </div>
       </div>
 
       <div className="progress-wrap">
         <div className="progress-bar-bg">
           <div
             className="progress-bar-fill"
-            style={{ width: `${data.soc}%`, background: color }}
+            style={{ width: `${soc}%`, background: color }}
           />
         </div>
       </div>

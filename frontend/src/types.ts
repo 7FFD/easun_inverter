@@ -42,12 +42,39 @@ export interface SystemStatus {
   inverter_time: string | null;
 }
 
+export interface SoftBmsSnapshot {
+  mode: "unknown" | "float_full" | "active";
+  phase: "C" | "F" | "D" | null;
+  anchored: boolean;
+  soc_pct: number | null;
+  used_since_full_wh: number;
+  discharged_kwh: number;
+  charged_kwh: number;
+  raw_discharged_kwh: number;
+  bias_w: number;
+  calibrated_cycles: number;
+  capacity_wh: number | null;
+}
+
+export interface SoftBmsStatus extends SoftBmsSnapshot {
+  config: {
+    capacity_wh: number | null;
+    bias_w: number;
+    efficiency: number;
+    auto_calibrate: boolean;
+  };
+  bias_history: number[];
+  anchors: number;
+  last_anchor: string | null;
+}
+
 export interface InverterData {
   battery: BatteryData | null;
   pv: PVData | null;
   grid: GridData | null;
   output: OutputData | null;
   status: SystemStatus | null;
+  soft_bms?: SoftBmsSnapshot;
   timestamp: string;
   error?: string;
 }

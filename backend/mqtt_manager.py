@@ -52,6 +52,7 @@ SENSOR_DEFS = [
     # Battery
     ("battery_soc",          "Battery SOC",           "%",   "battery",     "measurement",      "mdi:battery",              "battery.soc",               None),
     ("battery_power",        "Battery Power",         "W",   "power",       "measurement",      "mdi:battery-charging",     "battery.power",             None),
+    ("soft_bms_soc",         "SoftBMS SOC",           "%",   "battery",     "measurement",      "mdi:battery-heart-variant","soft_bms.soc_pct",           None),
     # Solar
     ("pv_total_power",       "PV Total Power",        "W",   "power",       "measurement",      "mdi:solar-power",          "pv.total_power",            None),
     ("pv_energy_today",      "PV Energy Today",       "kWh", "energy",      "total_increasing", "mdi:solar-power",          "pv.pv_generated_today",     None),
@@ -69,6 +70,12 @@ SENSOR_DEFS = [
     ("battery_voltage",      "Battery Voltage",       "V",   "voltage",     "measurement",      "mdi:battery",              "battery.voltage",           "diagnostic"),
     ("battery_current",      "Battery Current",       "A",   "current",     "measurement",      "mdi:current-dc",           "battery.current",           "diagnostic"),
     ("battery_temperature",  "Battery Temperature",   "°C",  "temperature", "measurement",      "mdi:thermometer",          "battery.temperature",       "diagnostic"),
+    # SoftBMS detail
+    ("soft_bms_used",        "SoftBMS Used Since Full","Wh", None,          "measurement",      "mdi:battery-minus",        "soft_bms.used_since_full_wh","diagnostic"),
+    ("soft_bms_discharged",  "SoftBMS Energy Out",    "kWh", "energy",      "total_increasing", "mdi:battery-arrow-down",   "soft_bms.discharged_kwh",   "diagnostic"),
+    ("soft_bms_charged",     "SoftBMS Energy In",     "kWh", "energy",      "total_increasing", "mdi:battery-arrow-up",     "soft_bms.charged_kwh",      "diagnostic"),
+    ("soft_bms_bias",        "SoftBMS Power Bias",    "W",   "power",       "measurement",      "mdi:delta",                "soft_bms.bias_w",           "diagnostic"),
+    ("soft_bms_mode",        "SoftBMS Mode",          None,  None,          None,               "mdi:state-machine",        "soft_bms.mode",             "diagnostic"),
     # PV strings detail
     ("pv_charging_power",    "PV Charging Power",     "W",   "power",       "measurement",      "mdi:solar-power",          "pv.charging_power",         "diagnostic"),
     ("pv1_voltage",          "PV1 Voltage",           "V",   "voltage",     "measurement",      "mdi:solar-panel",          "pv.pv1_voltage",            "diagnostic"),
