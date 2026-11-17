@@ -80,6 +80,18 @@ services:
     restart: unless-stopped
 ```
 
+### Router bridge (`bridge/`, Go)
+Standalone static binary for tiny OpenWrt routers (no Python/UI): reads the inverter's Modbus registers and publishes
+to MQTT. With `-model` it also publishes decoded sensors (same ids/topics as `mqtt_manager.py`, so HA entities carry
+over), HA discovery, and SoftBms (port of `backend/soft_bms.py`, state in a plain-text file, written rarely to spare
+flash). `-regs` publishes raw registers to `<topic>/reg/<addr>`. `-once` prints values and exits.
+```bash
+cd bridge && go test ./... && ./build.sh        # mips softfloat by default -> out/easun-bridge-mips (~2.7 MB)
+./deploy.sh root@<router>                       # copies binary + procd init script (config: /etc/easun-bridge.conf)
+```
+Keep it dependency-free and avoid `encoding/json`/`net/http` (binary size matters: flash is ~5 MB). Register maps and the
+sensor table in `model.go` mirror `backend/easunpy/models.py` / `mqtt_manager.py`; update both when adding a model.
+
 ## Architecture
 
 ### Overview

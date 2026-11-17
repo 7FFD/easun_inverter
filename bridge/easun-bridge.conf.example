@@ -1,0 +1,16 @@
+# Copy to /etc/easun-bridge.conf
+INVERTER_IP=192.168.1.198
+LOCAL_IP=192.168.1.1          # the router's address on the inverter's subnet
+MQTT_BROKER=192.168.1.50:1883
+MQTT_USER=
+MQTT_PASS=
+
+# Decoded Home Assistant sensors + MQTT discovery + SoftBMS (ISOLAR_SMG_II_4K|6K|11K; empty = raw only)
+MODEL=ISOLAR_SMG_II_6K
+DEVICE_ID=easun_inverter      # keep the id your Python backend used to keep the same HA entities
+BMS_CAPACITY_WH=0             # usable battery Wh; needed for SoftBMS SOC % (e.g. 5000)
+
+# Optional raw register passthrough to <TOPIC>/reg/<address>
+TOPIC=easun/inverter
+REGS=
+INTERVAL=20s
