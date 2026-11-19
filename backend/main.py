@@ -383,6 +383,7 @@ class SoftBmsConfigRequest(BaseModel):
     bias_w: Optional[float] = None        # seed power-reading bias; resets calibration history
     efficiency: Optional[float] = None    # charge efficiency, 0.5–1.0
     auto_calibrate: Optional[bool] = None
+    discharge_enter_w: Optional[float] = None  # P below this counts as discharge (default 20; e.g. -50 if idle flickers 0/-38)
 
 
 @app.get("/api/soft-bms")

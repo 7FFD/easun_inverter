@@ -14,6 +14,7 @@ start_service() {
 		-mqtt "$MQTT_BROKER" -mqtt-user "${MQTT_USER:-}" -mqtt-pass "${MQTT_PASS:-}" \
 		-model "${MODEL:-}" -device-id "${DEVICE_ID:-easun_inverter}" \
 		-bms-capacity-wh "${BMS_CAPACITY_WH:-0}" \
+		-bms-bias-w "${BMS_BIAS_W:-190}" -bms-discharge-w "${BMS_DISCHARGE_W:-20}" \
 		-topic "${TOPIC:-easun/inverter}" -regs "${REGS:-}" -interval "${INTERVAL:-20s}"
 	procd_set_param respawn
 	procd_set_param stdout 1

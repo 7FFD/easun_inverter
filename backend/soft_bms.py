@@ -27,7 +27,7 @@ mode "active"      battery is charging/discharging; the bias-corrected power
 Phases (from the raw power reading, confirmed over 2 samples):
     C  charge     P >= 150 W   (entering from float_full needs P >= 300 W)
     F  float band 20 <= P < 150 W
-    D  discharge  P < 20 W
+    D  discharge  P < discharge_enter_w (default 20 W; -50 W for inverters that idle at 0/-38 W)
 
 Anchor: C → F (after a charge that peaked >= 300 W) means the charger reached
 float, so deficit is reset to 0 and mode becomes float_full. Known limitation:
@@ -68,6 +68,9 @@ class SoftBmsConfig:
     bias_w: float = 190.0                # seed power-reading bias (see module docstring)
     efficiency: float = 0.95             # charge efficiency
     auto_calibrate: bool = True          # re-estimate bias from completed cycles
+    # P below this is "discharge". Inverter-specific: some units idle at 0/-38 W (one
+    # quantisation step) while full, so they need e.g. -50 or the idle flicker reads as discharge.
+    discharge_enter_w: float = DISCHARGE_ENTER_W
 
 
 def _fresh_state() -> dict:
@@ -145,7 +148,8 @@ class SoftBms:
             return self.cfg.bias_w
         return float(statistics.median([self.cfg.bias_w] + list(self.s["bias_history"])))
 
-    def configure(self, capacity_wh=None, bias_w=None, efficiency=None, auto_calibrate=None) -> dict:
+    def configure(self, capacity_wh=None, bias_w=None, efficiency=None, auto_calibrate=None,
+                  discharge_enter_w=None) -> dict:
         with self._lock:
             if capacity_wh is not None:
                 self.cfg.capacity_wh = float(capacity_wh) if capacity_wh > 0 else None
@@ -156,6 +160,8 @@ class SoftBms:
                 self.cfg.efficiency = max(0.5, min(1.0, float(efficiency)))
             if auto_calibrate is not None:
                 self.cfg.auto_calibrate = bool(auto_calibrate)
+            if discharge_enter_w is not None:
+                self.cfg.discharge_enter_w = max(-200.0, min(100.0, float(discharge_enter_w)))
             self.save()
             return self.status()
 
@@ -201,6 +207,8 @@ class SoftBms:
             return  # float_full (pinned at 100 %) and unknown accumulate nothing
 
         pc = pav - self.bias_w
+        if pav >= 0 and pc < 0:
+            pc = 0.0  # the inverter says the battery is not discharging: the bias must never turn that into drain
         if pc < 0:
             wh = -pc * hours
             s["discharged_wh"] += wh
@@ -217,12 +225,11 @@ class SoftBms:
             if pav >= CHARGE_PHASE_W:
                 c["chg_raw_wh"] += pav * hours
 
-    @staticmethod
-    def _phase_of(p: float, mode: str) -> str:
+    def _phase_of(self, p: float, mode: str) -> str:
         charge_at = CHARGE_ENTER_W if mode == "float_full" else CHARGE_PHASE_W
         if p >= charge_at:
             return "C"
-        return "D" if p < DISCHARGE_ENTER_W else "F"
+        return "D" if p < self.cfg.discharge_enter_w else "F"
 
     def _update_phase(self, p: float) -> None:
         s = self.s

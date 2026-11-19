@@ -10,6 +10,11 @@ MODEL=ISOLAR_SMG_II_6K
 DEVICE_ID=easun_inverter      # keep the id your Python backend used to keep the same HA entities
 BMS_CAPACITY_WH=0             # usable battery Wh; needed for SoftBMS SOC % (e.g. 5000)
 
+# Per-inverter SoftBMS tuning. Defaults (190 / 20) suit the original inverter.
+# For inverters that idle at 0/-38 W and never read positive in float: BMS_BIAS_W=0, BMS_DISCHARGE_W=-50
+BMS_BIAS_W=190                # power-reading bias in W
+BMS_DISCHARGE_W=20            # power below this (W) counts as discharge
+
 # Optional raw register passthrough to <TOPIC>/reg/<address>
 TOPIC=easun/inverter
 REGS=

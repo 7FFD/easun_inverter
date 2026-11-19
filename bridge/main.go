@@ -92,6 +92,7 @@ func main() {
 	bmsCap := flag.Float64("bms-capacity-wh", 0, "usable battery capacity in Wh (needed for SoftBMS SOC %)")
 	bmsBias := flag.Float64("bms-bias-w", 190, "seed power-reading bias in W")
 	bmsEff := flag.Float64("bms-efficiency", 0.95, "charge efficiency 0.5-1.0")
+	bmsDisch := flag.Float64("bms-discharge-w", 20, "power below this (W) counts as discharge; use -50 for inverters that idle at 0/-38 W")
 	bmsAuto := flag.Bool("bms-auto-calibrate", true, "re-estimate bias from completed cycles")
 	flag.Parse()
 
@@ -144,6 +145,8 @@ func main() {
 				bms.cfg.BiasW = *bmsBias
 			case "bms-efficiency":
 				bms.cfg.Efficiency = *bmsEff
+			case "bms-discharge-w":
+				bms.cfg.DischargeW = *bmsDisch
 			case "bms-auto-calibrate":
 				bms.cfg.AutoCalibrate = *bmsAuto
 			}

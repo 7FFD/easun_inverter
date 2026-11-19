@@ -32,6 +32,7 @@ type bmsConfig struct {
 	BiasW         float64
 	Efficiency    float64
 	AutoCalibrate bool
+	DischargeW    float64 // P below this is discharge (default dischargeEnterW)
 }
 
 type bmsCycle struct {
@@ -74,7 +75,7 @@ type SoftBms struct {
 
 func NewSoftBms(path string, saveEvery time.Duration) *SoftBms {
 	b := &SoftBms{path: path, saveEvery: saveEvery, lastPersist: time.Now(),
-		cfg: bmsConfig{BiasW: 190, Efficiency: 0.95, AutoCalibrate: true}, s: freshState()}
+		cfg: bmsConfig{BiasW: 190, Efficiency: 0.95, AutoCalibrate: true, DischargeW: dischargeEnterW}, s: freshState()}
 	b.load()
 	return b
 }
@@ -130,6 +131,7 @@ func (b *SoftBms) load() {
 	}
 	num("cfg_bias_w", &b.cfg.BiasW)
 	num("cfg_efficiency", &b.cfg.Efficiency)
+	num("cfg_discharge_w", &b.cfg.DischargeW)
 	flag("cfg_auto_calibrate", &b.cfg.AutoCalibrate)
 	// A restart mid-cycle makes that cycle useless for calibration, so the cycle is not restored.
 	log.Printf("softbms: restored state (mode=%s, deficit=%.0f Wh)", b.s.Mode, b.s.DeficitWh)
@@ -174,6 +176,7 @@ func (b *SoftBms) saveLocked() {
 	}
 	w("cfg_bias_w", f(c.BiasW))
 	w("cfg_efficiency", f(c.Efficiency))
+	w("cfg_discharge_w", f(c.DischargeW))
 	w("cfg_auto_calibrate", one(c.AutoCalibrate))
 	tmp := b.path + ".tmp"
 	if err := os.WriteFile(tmp, []byte(sb.String()), 0o644); err != nil {
@@ -234,6 +237,9 @@ func (b *SoftBms) integrate(p0, p1, hours float64) {
 		return
 	}
 	pc := pav - b.biasW()
+	if pav >= 0 && pc < 0 {
+		pc = 0 // inverter says not discharging: the bias must never turn that into drain
+	}
 	if pc < 0 {
 		wh := -pc * hours
 		s.DischargedWh += wh
@@ -253,7 +259,7 @@ func (b *SoftBms) integrate(p0, p1, hours float64) {
 	}
 }
 
-func phaseOf(p float64, mode string) string {
+func (b *SoftBms) phaseOf(p float64, mode string) string {
 	at := chargePhaseW
 	if mode == "float_full" {
 		at = chargeEnterW
@@ -261,7 +267,7 @@ func phaseOf(p float64, mode string) string {
 	if p >= at {
 		return "C"
 	}
-	if p < dischargeEnterW {
+	if p < b.cfg.DischargeW {
 		return "D"
 	}
 	return "F"
@@ -269,7 +275,7 @@ func phaseOf(p float64, mode string) string {
 
 func (b *SoftBms) updatePhase(p float64) {
 	s := &b.s
-	phase := phaseOf(p, s.Mode)
+	phase := b.phaseOf(p, s.Mode)
 	if s.Mode == "unknown" {
 		s.Phase = phase
 		if phase == "F" {
